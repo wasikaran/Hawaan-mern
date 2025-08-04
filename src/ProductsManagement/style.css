@@ -1,0 +1,201 @@
+.product-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 30px;
+  justify-content: flex-start;
+}
+
+/* PRODUCT CARD WIDTH FIX */
+.product-card {
+  width: calc(25% - 20px); /* 4 per row desktop */
+  background: #fff;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 0 8px rgba(0,0,0,0.1);
+  position: relative;
+  transition: 0.3s ease-in-out;
+}
+
+/* Remove this conflicting fixed width if it's still in your CSS */
+.product-card {
+  width: 230px; /* ❌ DELETE THIS LINE */
+}
+
+@media (max-width: 992px) {
+  .product-card {
+    width: calc(33.33% - 20px); /* 3 per row */
+  }
+}
+
+@media (max-width: 768px) {
+  .product-card {
+    width: calc(50% - 20px); /* 2 per row */
+  }
+}
+
+@media (max-width: 480px) {
+  .product-card {
+    width: 100%; /* 1 per row */
+  }
+}
+
+
+.product-card {
+  width: 230px;
+  border-radius: 10px;
+  overflow: hidden;
+  background: #fff;
+  box-shadow: 0 0 8px rgba(0,0,0,0.1);
+  position: relative;
+  transition: 0.3s ease-in-out;
+}
+
+.product-image {
+  position: relative;
+  height: 250px;
+  overflow: hidden;
+}
+
+.product-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  transition: 0.4s ease-in-out;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.product-image .hover-img {
+  opacity: 0;
+}
+
+.product-card:hover .main-img {
+  opacity: 0;
+}
+
+.product-card:hover .hover-img {
+  opacity: 1;
+}
+
+.discount {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background: #4CAF50;
+  color: #fff;
+  font-size: 12px;
+  padding: 3px 7px;
+  border-radius: 4px;
+  font-weight: bold;
+}
+
+.icons {
+  position: absolute;
+  top: 50%;
+  right: -40px;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  transition: 0.4s ease-in-out;
+}
+
+.icons span {
+  background: #fff;
+  border: 1px solid #ddd;
+  padding: 8px;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.icons span:hover {
+  background: #f5f5f5;
+}
+
+.product-card:hover .icons {
+  right: 10px;
+}
+
+.product-info {
+  padding: 15px;
+  text-align: center;
+}
+
+.category {
+  color: #f48fb1;
+  font-size: 12px;
+  font-weight: bold;
+  margin: 0;
+}
+
+h3 {
+  margin: 5px 0;
+  font-size: 16px;
+  color: #444;
+}
+
+.rating {
+  margin: 10px 0;
+}
+
+.price {
+  font-size: 14px;
+}
+
+.price b {
+  color: #000;
+  margin-right: 8px;
+}
+
+.price span {
+  color: #999;
+  text-decoration: line-through;
+}
+
+
+.filter-content {
+  overflow: hidden;
+  max-height: 0;
+  opacity: 0;
+  transition: all 0.4s ease;
+  padding: 0 0;
+}
+
+.filter-content.open {
+  max-height: 300px; /* big enough to contain filter items */
+  opacity: 1;
+  padding: 8px 0;
+  color: #000;
+}
+.filter-section {
+  border-bottom: 1px solid #e2e2e2;
+  margin-bottom: 10px;
+}
+.filter-title {
+  display: flex;
+  justify-content: space-between;
+  cursor: pointer;
+  padding: 10px 0;
+  font-weight: 600;
+  color: #333;
+}
+.filter-option {
+  padding: 4px 0;
+}
+.filter-option input {
+  margin-right: 6px;
+}
+.rating-option {
+  padding: 6px 0;
+}
+.price-range {
+  display: flex;
+  gap: 5px;
+  align-items: center;
+}
+.price-range input {
+  width: 50%;
+  padding: 5px;
+}
