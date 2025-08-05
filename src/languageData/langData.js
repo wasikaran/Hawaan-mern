@@ -1,3 +1,5 @@
+import contact from "../pages/contact/contact";
+
 const translations = {
     english: {
         header: {
@@ -24,12 +26,14 @@ const translations = {
             electronics: ["Smart watch", "Smart TV", "Mouse", "Microphone"],
             jewllery: ["Earrings", "Couplerings", "Necklace", "bracelete"],
             perfumes: ["Floral", "Oriental", "Woody", "Fougere"],
-            subHeadings: ["Main Categories", "Popular Collections", "Company Info", "Customer Service", "Contact"],
+            subHeadings: ["Main Categories", "Popular Collections", "Company Info", "Customer Service", "Contact", "Info"],
             MainCategories: ["Home", "Jewellery", "Perfumes", "Men's Collection", "Women's Collection", "kid's Collection", "Electronic"],
             PopularCollections: ["Trending Earrings", "Premium Perfumes", "Men's Formal Wear", "Designing saree", "Smart Watches"],
             CompanyInfo: ["About", "Blogs", "Return Policy", "privacy Policy", "Terms & Conditions"],
             CustomerService: ["Contact Us", "Help Center", "Order Support", "Size Guide", "FAQS"],
-            copyRight: "All Rights Reserved 2024"
+            contact: ["taiser town, surjani town, karachi", "Support@Hawaan.gmail.com", "12345678900"],
+            copyRight: "All Rights Reserved 2024",
+
 
         },
         contact: "Contact",
@@ -65,6 +69,7 @@ const translations = {
       PopularCollections: ["ٹرینڈنگ بالیاں", "پریمیم عطر", "مردانہ فارمل پہناوے", "ڈیزائنر ساڑھی", "اسمارٹ گھڑیاں"],
       CompanyInfo: ["ہمارے بارے میں", "بلاگز", "واپسی کی پالیسی", "پرائیویسی پالیسی", "شرائط و ضوابط"],
       CustomerService: ["ہم سے رابطہ کریں", "مدد مرکز", "آرڈر سپورٹ", "سائز گائیڈ", "عمومی سوالات"],
+contact: ["ٹائیسر ٹاؤن، سرجانی ٹاؤن، کراچی", "Support@Hawaan.gmail.com", "۱۲۳۴۵۶۷۸۹۰۰"],
       copyRight: "جملہ حقوق محفوظ ہیں 2024"
     },
         contact: "رابطہ کریں",
