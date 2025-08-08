@@ -2,27 +2,42 @@ import React, { createContext, useContext, useState } from 'react';
 import axios from 'axios';
 
 
+
 const API_BASE_URL = 'http://localhost:5000/api/auth';
 
 export const AuthAPI = {
+  // LOGIN
   login: async (credentials) => {
     try {
       const response = await axios.post(`${API_BASE_URL}/login`, credentials);
-       
-      return response.data;
+      console.log(response.data)
+      return response.data; // contains { success, authToken }
     } catch (error) {
-      throw error.response?.data?.message || 'Login failed';
+      throw error.response?.data?.error || 'Login failed';
     }
   },
 
+  // SIGNUP
   signup: async (userData) => {
     try {
       const response = await axios.post(`${API_BASE_URL}/signup`, userData);
-       
-      return response.data;
-     
+      return response.data; // contains { success, authToken }
     } catch (error) {
-      throw error.response?.data?.message || 'Registration failed';
+      throw error.response?.data?.error || 'Registration failed';
+    }
+  },
+
+  // GET USER (requires token)
+  getUser: async (token) => {
+    try {
+      const response = await axios.post(`${API_BASE_URL}/getuser`, {}, {
+        headers: {
+          'auth-token': token  // 👈 This is required by your backend
+        }
+      });
+      return response.data; // user object without password
+    } catch (error) {
+      throw error.response?.data?.error || 'Failed to fetch user';
     }
   }
 };
@@ -36,6 +51,7 @@ export const useProduct = () => useContext(ProductContext);
 // 3. Provider Component
 export const ProductProvider = ({ children }) => {
   const [products, setProducts] = useState([]);
+    const [orders, setOrders] = useState([]);
   const [category, setCategory] = useState('');
   const [subCategory, setSubCategory] = useState('');
     const [quantity, setQuantity] = useState(1);
@@ -133,6 +149,39 @@ const res = await fetch(process.env.PUBLIC_URL + '/data.json');
   );
 };
 
+
+  const getOrders = async () => {
+    try {
+      const res = await axios.get('http://localhost:5000/api/order/getAllOrders',           {
+             headers: {
+               'Content-Type': 'application/json',
+               'auth-token': token
+             }
+           });
+      setOrders(res.data);
+       await setNotif({
+  message: "see your order detail in the orders page",
+  type: "success"
+});   
+    } catch (err) {
+      console.error('Error fetching orders:', err);
+    }
+  };
+
+  const deleteOrder = async (id) => {
+    try {
+      await axios.delete(`http://localhost:5000/api/order/deleteOrder/${id}`);
+       await setNotif({
+  message: "orders is successfully deleted from the dashborad",
+  type: "success"
+});   
+      setOrders(orders.filter(order => order._id !== id));
+    } catch (err) {
+      console.error('Error deleting order:', err);
+    }
+  };
+
+
     const removeProductFromCart = async (productId) => {
   try {
 
@@ -194,13 +243,15 @@ const deleteAllProductsFromCart = async () => {
 };
 
 
- const handleOrderSubmit = async (orderData) => {
+ const handleOrderSubmit = async (e, orderData) => {
+  e.preventDefault()
 
   // Basic validation can go here
+  console.log(orderData)
 
   const Data = {
   userInfo: orderData.userInfo,
-  cartItems: orderData.products,
+  cartItems: orderData.cartItems,
   total: orderData.total
 }
 
@@ -214,7 +265,6 @@ const deleteAllProductsFromCart = async () => {
     });
 
     if (res.status === 200 || res.status === 201) {
-      alert("Order placed successfully!");
       localStorage.removeItem("singleProduct"); // optional
        await setNotif({
   message: "order is successfully place we'll reply to you soon",
@@ -271,6 +321,9 @@ const deleteAllProductsFromCart = async () => {
     getSingleProduct,
         notif,
     setNotif,
+    orders,
+    deleteOrder,
+    getOrders,
     AuthAPI,
     deleteAllProductsFromCart,
     productAll,

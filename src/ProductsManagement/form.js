@@ -2,8 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useProduct } from '../contextAPI/FuncContext';
 
 const OrderForm = () => {
-    const { productAll, sProduct,
-        getSingleProduct,
+    const { productAll, 
         quantity,
         handleOrderSubmit,
 

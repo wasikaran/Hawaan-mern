@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom';
-import { useProduct } from '../../contextAPI/FuncContext';
-import  {useLanguage } from '../../contextAPI/LanguageContext';
 import { useNavigate } from 'react-router-dom';
+import  {useLanguage } from '../../contextAPI/LanguageContext';
+import { useProduct } from '../../contextAPI/FuncContext';
 import translations from '../../languageData/langData'
 
 const Header = () => {

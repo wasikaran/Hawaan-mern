@@ -2,12 +2,13 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
+import { useProduct } from '../contextAPI/FuncContext';
 
 const OrdersContainer = styled.div`
   padding: 2rem;
   max-width: 1200px;
   margin: 0 auto;
-`;
+  `;
 
 const OrdersHeader = styled.h2`
 font-size: 1.8rem;
@@ -15,7 +16,7 @@ font-size: 1.8rem;
   color: #2c3e50;
   border-bottom: 2px solid #eee;
   padding-bottom: 0.5rem;
-`;
+  `;
 
 const OrdersTable = styled.table`
   width: 100%;
@@ -40,8 +41,8 @@ const TableHeaderCell = styled.th`
 `;
 
 const TableRow = styled.tr`
-  border-bottom: 1px solid #dddddd;
-  &:nth-child(even) {
+border-bottom: 1px solid #dddddd;
+&:nth-child(even) {
     background-color: #f8f9fa;
     }
   &:hover {
@@ -79,7 +80,7 @@ display: inline-block;
   font-weight: 600;
   text-transform: uppercase;
   background-color: ${props => {
-    switch(props.status) {
+    switch (props.status) {
       case 'completed': return '#2ecc71';
       case 'shipped': return '#3498db';
       case 'processing': return '#f39c12';
@@ -110,7 +111,7 @@ padding: 1rem;
   background-color: #f8f9fa;
   border-radius: 4px;
   `;
-  
+
 const ImagePreviewContainer = styled.div`
   display: flex;
   align-items: center;
@@ -127,30 +128,18 @@ const MoreImagesBadge = styled.span`
   justify-content: center;
   font-size: 0.7rem;
   margin-left: 5px;
-`;
+  `;
+
 
 const Orders = () => {
+  const {
+    getOrders,
+    deleteOrder,
+    orders
+
+  } = useProduct();
   const navigate = useNavigate()
-  const [orders, setOrders] = useState([]);
   const [expandedOrder, setExpandedOrder] = useState(null);
-
-  const getOrders = async () => {
-    try {
-      const res = await axios.get('http://localhost:5000/api/order/getAllOrders');
-      setOrders(res.data);
-    } catch (err) {
-      console.error('Error fetching orders:', err);
-    }
-  };
-
-  const deleteOrder = async (id) => {
-    try {
-      await axios.delete(`http://localhost:5000/api/order/deleteOrder/${id}`);
-      setOrders(orders.filter(order => order._id !== id));
-    } catch (err) {
-      console.error('Error deleting order:', err);
-    }
-  };
 
   const toggleOrderDetails = (orderId) => {
     setExpandedOrder(expandedOrder === orderId ? null : orderId);
@@ -160,173 +149,173 @@ const Orders = () => {
     getOrders();
   }, []);
 
-  const handleLogout= async ()=>{
-  await localStorage.removeItem('token')
-  const token = localStorage.getItem('token')
-  console.log(token)
+  const handleLogout = async () => {
+    await localStorage.removeItem('token')
+    const token = localStorage.getItem('token')
+    console.log(token)
 
-  navigate('/auth')
-}
+    navigate('/auth')
+  }
 
   return (
     <>
-    <OrdersContainer>
-      <OrdersHeader>Order Management</OrdersHeader>
-      
-      {orders.length === 0 ? (
-        <p>No orders found.</p>
-      ) : (
-        <OrdersTable>
-          <TableHeader>
-            <tr>
-              <TableHeaderCell>S.No</TableHeaderCell>
-              <TableHeaderCell>Order ID</TableHeaderCell>
-              <TableHeaderCell>Product Image</TableHeaderCell>
-              <TableHeaderCell>Customer</TableHeaderCell>
-              <TableHeaderCell>Products</TableHeaderCell>
-              <TableHeaderCell>Total</TableHeaderCell>
-              <TableHeaderCell>Status</TableHeaderCell>
-              <TableHeaderCell>Payment</TableHeaderCell>
-              <TableHeaderCell>Action</TableHeaderCell>
-            </tr>
-          </TableHeader>
-          <tbody>
-            {orders.map((order, index) => (
-              <React.Fragment key={order._id}>
-                <TableRow onClick={() => toggleOrderDetails(order._id)} style={{ cursor: 'pointer' }}>
-                  <TableCell>{index + 1}</TableCell>
-                  <TableCell>#{order._id.slice(-6).toUpperCase()}</TableCell>
-                  <TableCell>
-                    <ImagePreviewContainer>
-                      {order.cartItems.length > 0 && (
-                        <>
-                          <ProductImagePreview 
-                            src={order.cartItems[0].image || '/images/placeholder-product.png'} 
-                            alt={order.cartItems[0].name} 
-                          />
-                          {order.cartItems.length > 1 && (
-                            <MoreImagesBadge>+{order.cartItems.length - 1}</MoreImagesBadge>
-                          )}
-                        </>
-                      )}
-                    </ImagePreviewContainer>
-                  </TableCell>
-                  <TableCell>
-                    <div>{order.userInfo.fullName}</div>
-                    <div style={{ fontSize: '0.8rem', color: '#7f8c8d' }}>{order.userInfo.email}</div>
-                  </TableCell>
-                  <TableCell>
-                    {order.cartItems.length} item{order.cartItems.length !== 1 ? 's' : ''}
-                  </TableCell>
-                  <TableCell>${order.total}</TableCell>
-                  <TableCell>
-                    <StatusBadge status={order.status || 'pending'}>
-                      {order.status || 'pending'}
-                    </StatusBadge>
-                  </TableCell>
-                  <TableCell>{order.userInfo.paymentMethod}</TableCell>
-                  <TableCell>
-                    <DeleteButton onClick={(e) => {
-                      e.stopPropagation();
-                      deleteOrder(order._id);
-                    }}>
-                      Delete
-                    </DeleteButton>
-                  </TableCell>
-                </TableRow>
-                
-                {expandedOrder === order._id && (
-                  <TableRow>
-                    <TableCell colSpan="9">
-                      <OrderDetails>
-                        <h3 style={{ marginTop: 0 }}>Order Details</h3>
-                        
-                        <div style={{ marginBottom: '1.5rem' }}>
-                          <h4>Customer Information</h4>
-                          <OrdersTable>
-                            <CustomerInfoHeader>
-                              <tr>
-                                <TableHeaderCell>Field</TableHeaderCell>
-                                <TableHeaderCell>Value</TableHeaderCell>
-                              </tr>
-                            </CustomerInfoHeader>
-                            <tbody>
-                              <TableRow>
-                                <TableCell><strong>Full Name</strong></TableCell>
-                                <TableCell>{order.userInfo.fullName}</TableCell>
-                              </TableRow>
-                              <TableRow>
-                                <TableCell><strong>Email</strong></TableCell>
-                                <TableCell>{order.userInfo.email}</TableCell>
-                              </TableRow>
-                              <TableRow>
-                                <TableCell><strong>Mobile</strong></TableCell>
-                                <TableCell>{order.userInfo.mobile}</TableCell>
-                              </TableRow>
-                              <TableRow>
-                                <TableCell><strong>Address</strong></TableCell>
-                                <TableCell>{order.userInfo.address}, {order.userInfo.city}, {order.userInfo.zipCode}</TableCell>
-                              </TableRow>
-                              <TableRow>
-                                <TableCell><strong>Payment Method</strong></TableCell>
-                                <TableCell>{order.userInfo.paymentMethod}</TableCell>
-                              </TableRow>
-                              <TableRow>
-                                <TableCell><strong>Order Notes</strong></TableCell>
-                                <TableCell>{order.userInfo.orderNotes || 'None'}</TableCell>
-                              </TableRow>
-                            </tbody>
-                          </OrdersTable>
-                        </div>
-                        
-                        <div>
-                          <h4>Products</h4>
-                          <OrdersTable>
-                            <TableHeader>
-                              <tr>
-                                <TableHeaderCell>#</TableHeaderCell>
-                                <TableHeaderCell>Image</TableHeaderCell>
-                                <TableHeaderCell>Product</TableHeaderCell>
-                                <TableHeaderCell>Category</TableHeaderCell>
-                                <TableHeaderCell>Price</TableHeaderCell>
-                                <TableHeaderCell>Qty</TableHeaderCell>
-                                <TableHeaderCell>Subtotal</TableHeaderCell>
-                              </tr>
-                            </TableHeader>
-                            <tbody>
-                              {order.cartItems.map((item, idx) => (
-                                <TableRow key={idx}>
-                                  <TableCell>{idx + 1}</TableCell>
-                                  <TableCell>
-                                    <ProductImage 
-                                      src={item.image || '/images/placeholder-product.png'} 
-                                      alt={item.name} 
-                                    />
-                                  </TableCell>
-                                  <TableCell>{item.name}</TableCell>
-                                  <TableCell>{item.category} / {item.subCategory}</TableCell>
-                                  <TableCell>${item.price}</TableCell>
-                                  <TableCell>{item.quantity}</TableCell>
-                                  <TableCell>${item.price * item.quantity}</TableCell>
-                                </TableRow>
-                              ))}
-                            </tbody>
-                          </OrdersTable>
-                        </div>
-                      </OrderDetails>
+      <OrdersContainer>
+        <OrdersHeader>Order Management</OrdersHeader>
+
+        {orders.length === 0 ? (
+          <p>No orders found.</p>
+        ) : (
+          <OrdersTable>
+            <TableHeader>
+              <tr>
+                <TableHeaderCell>S.No</TableHeaderCell>
+                <TableHeaderCell>Order ID</TableHeaderCell>
+                <TableHeaderCell>Product Image</TableHeaderCell>
+                <TableHeaderCell>Customer</TableHeaderCell>
+                <TableHeaderCell>Products</TableHeaderCell>
+                <TableHeaderCell>Total</TableHeaderCell>
+                <TableHeaderCell>Status</TableHeaderCell>
+                <TableHeaderCell>Payment</TableHeaderCell>
+                <TableHeaderCell>Action</TableHeaderCell>
+              </tr>
+            </TableHeader>
+            <tbody>
+              {orders.map((order, index) => (
+                <React.Fragment key={order._id}>
+                  <TableRow onClick={() => toggleOrderDetails(order._id)} style={{ cursor: 'pointer' }}>
+                    <TableCell>{index + 1}</TableCell>
+                    <TableCell>#{order._id.slice(-6).toUpperCase()}</TableCell>
+                    <TableCell>
+                      <ImagePreviewContainer>
+                        {order.cartItems.length > 0 && (
+                          <>
+                            <ProductImagePreview
+                              src={order.cartItems[0].image || '/images/placeholder-product.png'}
+                              alt={order.cartItems[0].name}
+                            />
+                            {order.cartItems.length > 1 && (
+                              <MoreImagesBadge>+{order.cartItems.length - 1}</MoreImagesBadge>
+                            )}
+                          </>
+                        )}
+                      </ImagePreviewContainer>
+                    </TableCell>
+                    <TableCell>
+                      <div>{order.userInfo.fullName}</div>
+                      <div style={{ fontSize: '0.8rem', color: '#7f8c8d' }}>{order.userInfo.email}</div>
+                    </TableCell>
+                    <TableCell>
+                      {order.cartItems.length} item{order.cartItems.length !== 1 ? 's' : ''}
+                    </TableCell>
+                    <TableCell>${order.total}</TableCell>
+                    <TableCell>
+                      <StatusBadge status={order.status || 'pending'}>
+                        {order.status || 'pending'}
+                      </StatusBadge>
+                    </TableCell>
+                    <TableCell>{order.userInfo.paymentMethod}</TableCell>
+                    <TableCell>
+                      <DeleteButton onClick={(e) => {
+                        e.stopPropagation();
+                        deleteOrder(order._id);
+                      }}>
+                        Delete
+                      </DeleteButton>
                     </TableCell>
                   </TableRow>
-                )}
-              </React.Fragment>
-            ))}
-          </tbody>
-        </OrdersTable>
-      )}
-    </OrdersContainer>
-    <div>
-                                    <button onClick={()=>{handleLogout()}} style={{height: '50px', color: 'white', width: '100px', marginBottom: '20px', margin: 'auto', backgroundColor: 'blue', borderRadius: '20px'}}>log out</button>
 
-    </div>
+                  {expandedOrder === order._id && (
+                    <TableRow>
+                      <TableCell colSpan="9">
+                        <OrderDetails>
+                          <h3 style={{ marginTop: 0 }}>Order Details</h3>
+
+                          <div style={{ marginBottom: '1.5rem' }}>
+                            <h4>Customer Information</h4>
+                            <OrdersTable>
+                              <CustomerInfoHeader>
+                                <tr>
+                                  <TableHeaderCell>Field</TableHeaderCell>
+                                  <TableHeaderCell>Value</TableHeaderCell>
+                                </tr>
+                              </CustomerInfoHeader>
+                              <tbody>
+                                <TableRow>
+                                  <TableCell><strong>Full Name</strong></TableCell>
+                                  <TableCell>{order.userInfo.fullName}</TableCell>
+                                </TableRow>
+                                <TableRow>
+                                  <TableCell><strong>Email</strong></TableCell>
+                                  <TableCell>{order.userInfo.email}</TableCell>
+                                </TableRow>
+                                <TableRow>
+                                  <TableCell><strong>Mobile</strong></TableCell>
+                                  <TableCell>{order.userInfo.mobile}</TableCell>
+                                </TableRow>
+                                <TableRow>
+                                  <TableCell><strong>Address</strong></TableCell>
+                                  <TableCell>{order.userInfo.address}, {order.userInfo.city}, {order.userInfo.zipCode}</TableCell>
+                                </TableRow>
+                                <TableRow>
+                                  <TableCell><strong>Payment Method</strong></TableCell>
+                                  <TableCell>{order.userInfo.paymentMethod}</TableCell>
+                                </TableRow>
+                                <TableRow>
+                                  <TableCell><strong>Order Notes</strong></TableCell>
+                                  <TableCell>{order.userInfo.orderNotes || 'None'}</TableCell>
+                                </TableRow>
+                              </tbody>
+                            </OrdersTable>
+                          </div>
+
+                          <div>
+                            <h4>Products</h4>
+                            <OrdersTable>
+                              <TableHeader>
+                                <tr>
+                                  <TableHeaderCell>#</TableHeaderCell>
+                                  <TableHeaderCell>Image</TableHeaderCell>
+                                  <TableHeaderCell>Product</TableHeaderCell>
+                                  <TableHeaderCell>Category</TableHeaderCell>
+                                  <TableHeaderCell>Price</TableHeaderCell>
+                                  <TableHeaderCell>Qty</TableHeaderCell>
+                                  <TableHeaderCell>Subtotal</TableHeaderCell>
+                                </tr>
+                              </TableHeader>
+                              <tbody>
+                                {order.cartItems.map((item, idx) => (
+                                  <TableRow key={idx}>
+                                    <TableCell>{idx + 1}</TableCell>
+                                    <TableCell>
+                                      <ProductImage
+                                        src={item.image || '/images/placeholder-product.png'}
+                                        alt={item.name}
+                                      />
+                                    </TableCell>
+                                    <TableCell>{item.name}</TableCell>
+                                    <TableCell>{item.category} / {item.subCategory}</TableCell>
+                                    <TableCell>${item.price}</TableCell>
+                                    <TableCell>{item.quantity}</TableCell>
+                                    <TableCell>${item.price * item.quantity}</TableCell>
+                                  </TableRow>
+                                ))}
+                              </tbody>
+                            </OrdersTable>
+                          </div>
+                        </OrderDetails>
+                      </TableCell>
+                    </TableRow>
+                  )}
+                </React.Fragment>
+              ))}
+            </tbody>
+          </OrdersTable>
+        )}
+      </OrdersContainer>
+      <div>
+        <button onClick={() => { handleLogout() }} style={{ height: '50px', color: 'white', width: '100px', marginBottom: '20px', margin: 'auto', backgroundColor: 'blue', borderRadius: '20px' }}>log out</button>
+
+      </div>
     </>
 
   );

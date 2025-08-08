@@ -28,9 +28,9 @@ router.post("/create", fetchuser, async (req, res) => {
 });
 
 // GET all orders
-router.get('/getAllOrders', async (req, res) => {
+router.get('/getAllOrders', fetchuser, async (req, res) => {
   try {
-    const orders = await Order.find().sort({ createdAt: -1 });
+    const orders = await Order.find({user: req.user.id}).sort({ createdAt: -1 });
     res.json(orders);
   } catch (error) {
     res.status(500).json({ message: 'Failed to fetch orders', error });

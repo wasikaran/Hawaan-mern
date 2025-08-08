@@ -3,8 +3,8 @@ import { AuthAPI, useProduct } from '../contextAPI/FuncContext';
 import { useNavigate } from 'react-router-dom';
 
 const AuthForm = () => {
-  const { setNotif} = useProduct()
-    const navigate  = useNavigate()
+  const { setNotif } = useProduct();
+  const navigate = useNavigate();
   const [isLogin, setIsLogin] = useState(true);
   const [formData, setFormData] = useState({
     name: '',
@@ -29,28 +29,28 @@ const AuthForm = () => {
 
     try {
       let response;
+
       if (isLogin) {
         response = await AuthAPI.login(formData);
-       await localStorage.setItem('token', response.authToken)
-        console.log(response.authToken)
-        if(response.success === true){
-           await setNotif({
-  message: "log in successfully now you can access our website freely",
-  type: "success"
-}); 
+        localStorage.setItem('token', response.authToken);
 
-          navigate('/')
+        if (response.success === true) {
+          setNotif({
+            message: "Log in successfully! You can now access the website freely.",
+            type: "success"
+          });
+          navigate('/');
         }
       } else {
         response = await AuthAPI.signup(formData);
-         await setNotif({
-  message: "sign up successfully now you can access our website freely",
-  type: "success"
-}); 
-        localStorage.setItem('token', response.data)
-        navigate('/')
+        localStorage.setItem('token', response.authToken); // ✅ fixed line
+        setNotif({
+          message: "Sign up successful! You can now access the website freely.",
+          type: "success"
+        });
+        navigate('/');
       }
-      
+
     } catch (err) {
       setError(err);
     } finally {
